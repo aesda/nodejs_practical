@@ -2,6 +2,9 @@ import express from "express";
 import ViteExpress from "vite-express";
 import bodyParser from "body-parser";
 import jobRouter from './routes/job.js';
+import { writeToCodesFile } from "./fileHandler/codeFindHandler.js";
+import { readCodesFromFile } from "./fileHandler/codeFindHandler.js";
+
 
 
 const app = express();
@@ -15,6 +18,7 @@ app.get("/hello", (req, res) => {
 
 app.post("/register", (req, res) => {
   const data = req.body;
+
   console.log(data);
   res.json({"status":"OK", message: `Sussesfully sent to email: ${data.email}` })
 
@@ -24,12 +28,16 @@ app.post("/register", (req, res) => {
 app.post("/send-code", (req, res) => {
   const body = req.body;
   const email = body.email;
-  const code= "12345";
-  console.log({email, code });
-  res.status(200).json({status:"OK", message: `Code sent to email: ${email}` });
+  const code = parseInt(Math.random() * 100000);
+  const codes = readCodesFromFile();
+  codes[email] = code;
 
 
 
+  writeToCodesFile(codes);
+
+  console.log({email,  code });
+  res.status(200).json({status: "OK", message: `Code sent to email: ${email}`, code});
 });
 
 app.post("/login", (req, res) => {
