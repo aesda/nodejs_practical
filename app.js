@@ -19,7 +19,7 @@ function writeDataToCSV(data) {
     console.log('Done')
 }
 
-async function getUrlContent() {
+async function getFilteredJob(url) {
     const response =  await fetch(url);
     const htmlBody = await response.text();
     const document = parse(htmlBody);
@@ -40,8 +40,32 @@ async function getUrlContent() {
     });
 
     let filteredJobListing = jobListingArray.filter(job => job.jobTitle && job.company && job.details);
+    return filteredJobListing;
 
-    writeDataToCSV(filteredJobListing);
+   
+}
+
+async function getUrlContent() {
+    let dataExists = true;
+    let page = 1;
+    let allJobListing = [];
+
+    while (dataExists) {
+        let requestUrl = `${url}?page=${page}`;
+        let filteredJobListing = await getFilteredJob(requestUrl);
+        if (filteredJobListing && (filteredJobListing.length > 0)) {
+            page++;
+            allJobListing= [...allJobListing, ...filteredJobListing];
+
+        }
+        else {
+            dataExists = false;
+        }
+
+    }
+
+    writeDataToCSV(allJobListing);
+
    
 }
 

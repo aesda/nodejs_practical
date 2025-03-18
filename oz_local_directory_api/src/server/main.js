@@ -1,7 +1,7 @@
 import express from "express";
 import ViteExpress from "vite-express";
 import bodyParser from "body-parser";
-import * as jobRouter from './routes/job.js';
+import jobRouter from './routes/job.js';
 
 
 const app = express();
